@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BNCP Smart Welfare Portal</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -32,9 +33,28 @@
         <p>36℃ Sunny</p>
     </div>
 
+    <!-- 여기만 교체 -->
     <div class="card">
-        <h2>🤖 AI 안내</h2>
-        <button onclick="welcome()">안내 시작</button>
+
+        <h2>🤖 BNCP AI 직원도우미</h2>
+
+        <input
+            id="question"
+            type="text"
+            placeholder="질문을 입력하세요">
+
+        <br><br>
+
+        <button onclick="askAI()">
+            질문하기
+        </button>
+
+        <br><br>
+
+        <div id="answer">
+            무엇을 도와드릴까요?
+        </div>
+
     </div>
 
 </div>
