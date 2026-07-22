@@ -391,8 +391,8 @@
   </footer>
 
   <script>
-    // 1. Render 백엔드 API 주소 (실제 배포된 서비스 URL에 맞게 주소를 확인해 주세요)
-    const BACKEND_API_URL = "https://bncp-ai.onrender.com/api/chat";
+    // 🚨 1. Cloudflare Worker API 주소 (본인의 Worker 주소로 반드시 변경해 주세요!)
+    const BACKEND_API_URL = "https://odd-butterfly-b936.chogak1449.workers.dev/";
 
     // 2. 주간 식단 데이터
     const weeklyData = [
@@ -456,7 +456,7 @@
 
     let currentTabIndex = 0;
 
-    // AI 검색 처리 함수
+    // AI 검색 처리 함수 (Cloudflare Worker 연동 수정)
     async function handleSearch() {
       const inputInput = document.getElementById('userInput');
       const responseArea = document.getElementById('responseArea');
@@ -478,12 +478,22 @@
 
         if (!response.ok) throw new Error("서버 응답 오류: " + response.status);
 
-        const data = await response.json();
-        responseArea.innerHTML = "<strong>🤖 AI 비서 답변:</strong><br><br>" + (data.reply || data.response || "답변을 수신했습니다.");
+        // Worker에서 준 JSON 혹은 Text 응답 처리
+        const contentType = response.headers.get("content-type");
+        let aiReply = "";
+
+        if (contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          aiReply = data.reply || data.response || "답변을 수신했습니다.";
+        } else {
+          aiReply = await response.text();
+        }
+
+        responseArea.innerHTML = "<strong>🤖 AI 비서 답변:</strong><br><br>" + aiReply;
 
       } catch (error) {
         console.error("통신 에러:", error);
-        responseArea.innerHTML = "⚠️ 답변을 불러오는 중 오류가 발생했습니다.<br>백엔드 API 주소(" + BACKEND_API_URL + ") 및 서버 상태를 확인해 주세요.";
+        responseArea.innerHTML = "⚠️ 답변을 불러오는 중 오류가 발생했습니다.<br>Cloudflare Worker API 주소(" + BACKEND_API_URL + ") 및 상태를 확인해 주세요.";
       } finally {
         inputInput.disabled = false;
         inputInput.focus();
